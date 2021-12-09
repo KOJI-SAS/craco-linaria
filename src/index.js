@@ -3,7 +3,6 @@ const {
 	loaderByName,
 	throwUnexpectedConfigError,
 } = require('@craco/craco')
-const cosmiconfig = require('cosmiconfig')
 
 module.exports = {
 	overrideJestConfig,
@@ -65,8 +64,7 @@ function transformBabelLoader(loader, pluginOptions) {
 	const options = loader.options || {}
 	const presets = options.presets || []
 	options.presets = presets
-	const { babelOptions, ...linariaOptions } =
-		pluginOptions || (cosmiconfig('linaria').searchSync() || {}).config || {}
+	const { babelOptions, ...linariaOptions } = pluginOptions || {}
 
 	return {
 		test: loader.test,
@@ -76,13 +74,13 @@ function transformBabelLoader(loader, pluginOptions) {
 				loader: loader.loader,
 				options: {
 					...options,
-					presets: presets.concat('linaria/babel'),
+					presets: presets.concat('@linaria'),
 				},
 			},
 			{
-				loader: 'linaria/loader',
+				loader: '@linaria/webpack-loader',
 				options: {
-					cacheDirectory: 'src/.linaria_cache',
+					cacheDirectory: '.linaria_cache',
 					sourceMap: process.env.NODE_ENV !== 'production',
 					babelOptions: {
 						presets,
